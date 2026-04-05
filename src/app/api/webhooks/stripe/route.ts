@@ -44,8 +44,22 @@ export async function POST(req: Request) {
           event.type === 'customer.subscription.created'
         );
         break;
-      
-      // Add other cases like checkout.session.completed if necessary
+      case 'checkout.session.completed': {
+        const session = event.data.object as Stripe.Checkout.Session;
+        if (session.mode === 'subscription' && session.client_reference_id) {
+          const supabaseAdmin = getSupabaseAdmin();
+          const { error } = await supabaseAdmin
+            .from('profiles')
+            .update({ stripe_customer_id: session.customer as string })
+            .eq('id', session.client_reference_id);
+          
+          if (error) {
+            console.error('Error linking stripe customer to profile:', error);
+          }
+        }
+        break;
+      }
+        
       default:
         console.log(`Unhandled event type ${event.type}`);
     }
