@@ -47,7 +47,7 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/modules') // Or wherever we want after onboarding
+  redirect('/dashboard') // Redireciona pro Dashboard para cair no Paywall
 }
 
 export async function logout() {
