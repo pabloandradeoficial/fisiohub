@@ -125,10 +125,32 @@ async function manageSubscriptionStatusChange(
     ? planType 
     : 'free'; // Se foi cancelado ou não pago, volta pra free
 
-  await supabaseAdmin
-    .from('profiles')
-    .update({ plan_type: newPlanTypeForProfile })
-    .eq('id', uuid);
+  if (newPlanTypeForProfile === 'free') {
+    // Antes de rebaixar, vamos garantir que ele não tem NENHUMA outra assinatura ativa rodando em paralelo
+    // Isso evita o bug de um evento de cancelamento antigo sobrepor uma compra nova do mesmo cliente.
+    const { data: otherActiveSubs } = await supabaseAdmin
+      .from('subscriptions')
+      .select('id, plan_type')
+      .eq('user_id', uuid)
+      .in('status', ['active', 'trialing'])
+      .neq('id', subscriptionId);
+
+    if (otherActiveSubs && otherActiveSubs.length > 0) {
+      console.log(`Ignorando downgrade para free. O usuário possui outra assinatura ativa: ${otherActiveSubs[0].id}`);
+      // Não rebaixa o profile, mantém o plano da assinatura ativa encontrada!
+    } else {
+      await supabaseAdmin
+        .from('profiles')
+        .update({ plan_type: 'free' })
+        .eq('id', uuid);
+    }
+  } else {
+    // Se a assinatura do webhook vier ativa, impõe ela no perfil com certeza absoluta!
+    await supabaseAdmin
+      .from('profiles')
+      .update({ plan_type: newPlanTypeForProfile })
+      .eq('id', uuid);
+  }
 
   // 4. Salvar na Tabela de Histórico
   const subscriptionData = {
