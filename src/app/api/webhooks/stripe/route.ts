@@ -107,9 +107,8 @@ async function manageSubscriptionStatusChange(
 // Helper to map Stripe Product/Price IDs to our DB schema plan_types
 function mapStripePriceToPlanType(priceId: string): string {
   const priceMapping: Record<string, string> = {
-    'price_123_basic': 'basic',
-    'price_456_pro': 'pro',
-    'price_789_turma': 'turma',
+    'price_1TIxh3JQ3Z4y9v6CIM30iIGz': 'elite_mensal',
+    'price_1TIxhZJQ3Z4y9v6C0FgwuTq1': 'elite_anual',
   };
-  return priceMapping[priceId] || 'basic';
+  return priceMapping[priceId] || 'free';
 }
