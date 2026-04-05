@@ -2,20 +2,26 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-// We use the admin client here to bypass RLS since this is a server webhook
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-01-27.acacia', // Ensure we match the installed version or current Stripe version
-});
+
+function getSupabaseAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
+
+function getStripe() {
+  return new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: '2025-01-27.acacia',
+  });
+}
 
 export async function POST(req: Request) {
   const payload = await req.text();
   const sig = req.headers.get('stripe-signature') as string;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+  const stripe = getStripe();
 
   let event: Stripe.Event;
 
@@ -56,6 +62,9 @@ async function manageSubscriptionStatusChange(
   customerId: string,
   createAction: boolean
 ) {
+  const supabaseAdmin = getSupabaseAdmin();
+  const stripe = getStripe();
+
   // 1. Fetch the user's UUID from the profiles table using the Stripe customer ID
   const { data: customerData, error: noCustomerError } = await supabaseAdmin
     .from('profiles')
