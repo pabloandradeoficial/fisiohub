@@ -203,6 +203,80 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Pricing Section */}
+      <section className="bg-white py-24" id="planos">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-50 border border-gold-200 text-gold-700 text-sm font-semibold shadow-sm mb-6">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-gold-500"></span>
+            </span>
+            Vagas Abertas
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black text-brown-900 mb-6 tracking-tight">Investimento em <span className="text-gold-500">Conhecimento Clínico</span></h2>
+          <p className="text-lg text-brown-800/70 max-w-2xl mx-auto font-medium mb-16">
+            Escolha o plano ideal para acelerar seu raciocínio. Ao clicar, você criará sua conta de acesso e será direcionado ao caixa seguro.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto text-left">
+            {/* Mensal Card */}
+            <div className="bg-white rounded-[2rem] p-10 border border-brown-100 shadow-xl relative flex flex-col hover:border-gold-300 transition-all duration-300 hover:-translate-y-1">
+              <h3 className="text-2xl font-bold text-brown-900 mb-2">Elite Mensal</h3>
+              <p className="text-brown-800/60 font-medium mb-8">Acesso flexível para você estudar e praticar no seu próprio ritmo.</p>
+              
+              <div className="mb-8">
+                <span className="text-5xl font-black text-brown-900">R$ 67</span>
+                <span className="text-brown-800/60 font-medium text-lg">/mês</span>
+              </div>
+
+              <ul className="space-y-4 mb-10 font-semibold text-brown-800">
+                <li className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-gold-500 shrink-0" /> Acesso ilimitado aos Simuladores IA</li>
+                <li className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-gold-500 shrink-0" /> Módulos completos com Videoaulas</li>
+                <li className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-gold-500 shrink-0" /> Raciocínio Baseado em CPGs (Diretrizes)</li>
+                <li className="flex items-start gap-3 text-brown-800/40"><CheckCircle2 className="w-5 h-5 shrink-0" /> Suporte VIP (Exclusivo Anual)</li>
+              </ul>
+
+              <Link 
+                href="/register"
+                className="mt-auto w-full py-4 px-6 rounded-xl bg-brown-50 hover:bg-brown-100 text-brown-900 font-bold border border-brown-200 transition-colors flex justify-center items-center gap-2 text-lg"
+              >
+                Assinar Plano Mensal
+              </Link>
+            </div>
+
+            {/* Anual Card (Destaque) */}
+            <div className="bg-brown-900 rounded-[2rem] p-10 border border-gold-500/30 shadow-2xl relative flex flex-col transform md:-translate-y-4">
+              <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-gold-500 text-white px-6 py-2 rounded-full text-sm font-black uppercase tracking-wider shadow-lg">
+                Recomendado (38% OFF)
+              </div>
+
+              <h3 className="text-2xl font-bold text-white mb-2">Elite Anual</h3>
+              <p className="text-brown-200 font-medium mb-8">Comprometimento total com a evolução do seu raciocínio clínico.</p>
+              
+              <div className="mb-8">
+                <span className="text-5xl font-black text-white">R$ 497</span>
+                <span className="text-brown-300 font-medium text-lg">/ano</span>
+                <div className="text-gold-400 text-sm font-bold mt-2 bg-gold-500/10 inline-block px-3 py-1 rounded-md">Equivale a apenas R$ 41,41 por mês!</div>
+              </div>
+
+              <ul className="space-y-4 mb-10 font-semibold text-brown-50">
+                <li className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-gold-400 shrink-0" /> Tudo que o Plano Mensal possui</li>
+                <li className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-gold-400 shrink-0" /> Participação em Workshops ao Vivo</li>
+                <li className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-gold-400 shrink-0" /> Emissão de Certificados e Horas</li>
+                <li className="flex items-start gap-3"><CheckCircle2 className="w-5 h-5 text-gold-400 shrink-0" /> Acesso direto ao Suporte VIP (WhatsApp)</li>
+              </ul>
+
+              <Link 
+                href="/register"
+                className="mt-auto w-full py-4 px-6 rounded-xl bg-gold-500 hover:bg-gold-400 text-white font-black shadow-lg shadow-gold-500/20 transition-all active:scale-95 flex justify-center items-center gap-2 text-lg"
+              >
+                Assinar Plano Anual 
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }
