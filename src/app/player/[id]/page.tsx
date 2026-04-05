@@ -19,7 +19,7 @@ export default function PlayerPage() {
     setFeedback(null);
     
     // In a real scenario, we'd pass the actual lessonId from params
-    const res = await submitClinicalReasoning('lesson_1', reasoning);
+    const res = await submitClinicalReasoning('lesson_1', [{ role: 'user', content: reasoning }]);
     
     if (res.success && res.feedback) {
       setFeedback(res.feedback);
