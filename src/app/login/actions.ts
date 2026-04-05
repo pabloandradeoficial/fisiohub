@@ -19,7 +19,7 @@ export async function login(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/dashboard')
+  redirect('/agents')
 }
 
 export async function signup(formData: FormData) {
@@ -47,7 +47,7 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/dashboard') // Redireciona pro Dashboard para cair no Paywall
+  redirect('/agents') // Redireciona pro Agents para cair no Freemium
 }
 
 export async function logout() {

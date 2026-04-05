@@ -1,139 +1,47 @@
-'use client';
+import { createClient } from '@/utils/supabase/server';
+import { redirect } from 'next/navigation';
+import AgentsClient from './AgentsClient';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { ArrowLeft, BrainCircuit, User, Zap, Activity, Heart, Wind, Users, Shield, Sparkles, Stethoscope, Target, Combine, Search, Bone, BookOpen, ClipboardCheck, BarChart3, Scale, ShieldAlert, HeartHandshake, Briefcase, FileText, Calculator, Landmark, LineChart, Receipt, TrendingUp, Star } from 'lucide-react';
+export default async function AgentsServerPage() {
+  const supabase = await createClient();
+  const { data: { user }, error } = await supabase.auth.getUser();
 
-export default function AgentsPage() {
-  const [activeCategory, setActiveCategory] = useState('pratica');
+  if (error || !user) {
+    redirect('/login');
+  }
 
-  const categories = [
-    { id: 'pratica', name: 'Prática Clínica' },
-    { id: 'pesquisa', name: 'Pesquisa' },
-    { id: 'pablo', name: 'Mentoria Pablo' },
-    { id: 'juridico', name: 'Jurídico' },
-    { id: 'contabil', name: 'Contábil' },
-  ];
+  // Get user profile to check plan_type
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('plan_type')
+    .eq('id', user.id)
+    .single();
 
-  const agents = [
-    // --- PRÁTICA CLÍNICA ---
-    { id: 'anatomia', category: 'pratica', name: 'Fundamentação Anatômica', description: 'Mestre em anatomia palpatória, estrutural e cinesiologia clínica.', icon: User, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'avaliacao-avancada', category: 'pratica', name: 'Avaliação Avançada', description: 'Focado em raciocínio propedêutico e cluster de testes para garantir precisão diagnóstica.', icon: Search, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'traumato-ortopedia', category: 'pratica', name: 'Traumato-ortopedia', description: 'Especialista em conduta clínica, biomecânica e diagnóstico diferencial.', icon: Bone, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'agentes-fisicos', category: 'pratica', name: 'Agentes Físicos e Biotérmicos', description: 'Agentes Hídricos, Biotérmicos, Bioelétricos e Fitoterápicos.', icon: Zap, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'terapia-manual', category: 'pratica', name: 'Terapias Manuais', description: 'Recursos Terapêuticos Manuais e Práticas Integrativas.', icon: Combine, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'reumatologica', category: 'pratica', name: 'Fisioterapia Reumatológica', description: 'Abordagem focada em doenças autoimunes e inflamatórias crônicas.', icon: Activity, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'cardiovascular', category: 'pratica', name: 'Fisio Cardiovascular', description: 'Fisioterapia Cardiovascular Ambulatorial e Hospitalar.', icon: Heart, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'respiratoria', category: 'pratica', name: 'Fisioterapia Respiratória', description: 'Fisioterapia Ambulatorial e Hospitalar focada em mecânica ventilatória.', icon: Wind, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'saude-mulher', category: 'pratica', name: 'Saúde da Mulher', description: 'Baseada na Saúde da Mulher e Sexualidade, abordando assoalho pélvico.', icon: Users, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'geriatrica', category: 'pratica', name: 'Fisioterapia Geriátrica', description: 'Fisioterapia Gerontológica focada em prevenção de quedas e sarcopenia.', icon: Activity, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'intensiva', category: 'pratica', name: 'Fisio Intensiva & Neonatologia', description: 'Manuseio em UTI adulto e Neonatologia com raciocínio ventilatório.', icon: Stethoscope, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'esporte', category: 'pratica', name: 'Fisioterapia do Esporte', description: 'Recuperação atlética, return-to-play e alta performance esportiva.', icon: Target, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'preventiva', category: 'pratica', name: 'Fisioterapia Preventiva', description: 'Abordagem focada em profilaxia funcional a longo prazo.', icon: Shield, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'dermatofuncional', category: 'pratica', name: 'Fisio Dermatofuncional', description: 'Tratamentos reparadores com evidência para tecidos tegumentares.', icon: Sparkles, color: 'bg-brown-50', iconColor: 'text-gold-600' },
+  const isElite = profile?.plan_type === 'elite_mensal' || profile?.plan_type === 'elite_anual';
 
-    // --- PESQUISA ---
-    { id: 'pesquisa-tcc', category: 'pesquisa', name: 'Mentoria em TCC', description: 'Apoio na formulação da pergunta (PICO), metodologia e revisão bibliográfica.', icon: BookOpen, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'pesquisa-cep', category: 'pesquisa', name: 'Aprovação no CEP', description: 'Guia definitivo para preencher Plataforma Brasil e evitar pendências éticas.', icon: ClipboardCheck, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'pesquisa-estatistica', category: 'pesquisa', name: 'Análise Estatística', description: 'Ajuda para interpretar SPSS, p-valor e escolher o teste exato para a sua amostra.', icon: BarChart3, color: 'bg-brown-50', iconColor: 'text-gold-600' },
+  // Calculate Trial logic based on user.created_at
+  const createdAtDate = new Date(user.created_at);
+  const trialExpiresAt = new Date(createdAtDate.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days
+  const now = new Date();
+  const isTrialActive = now < trialExpiresAt;
+  
+  let trialDaysLeft = 0;
+  if (isTrialActive) {
+     const msLeft = trialExpiresAt.getTime() - now.getTime();
+     trialDaysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24));
+  }
 
-    // --- MENTOR PABLO ---
-    { id: 'pablo-mentor', category: 'pablo', name: 'Mentor Pablo Andrade', description: 'Visão de carreira, negócios, networking e transição para alto impacto clínico.', icon: Star, color: 'bg-gold-50', iconColor: 'text-gold-600' },
-
-    // --- JURÍDICO ---
-    { id: 'direito-civil-penal', category: 'juridico', name: 'Responsabilidade Civil e Penal', description: 'Blindagem legal para clínicas, prevenção de glosas por danos e litígios.', icon: Scale, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'direito-consumidor', category: 'juridico', name: 'Direito do Consumidor', description: 'Tratamento das obrigações do fisioterapeuta perante o serviço e contratos.', icon: HeartHandshake, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'direito-paciente', category: 'juridico', name: 'Direitos do Paciente', description: 'Lidando com autonomia, consentimento livre e esclarecido (TCLE) com segurança.', icon: ShieldAlert, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'direito-trabalho', category: 'juridico', name: 'Direito do Trabalho', description: 'Tipos de associação comercial na clínica, sócios e direitos trabalhistas.', icon: Briefcase, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'direito-administrativo', category: 'juridico', name: 'Direito Administrativo', description: 'Regimes com planos de saúde, ANS e autarquias públicas.', icon: FileText, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-
-    // --- CONTÁBIL ---
-    { id: 'contabil-tributario', category: 'contabil', name: 'Planejamento Tributário', description: 'Regimes tributários: Vale a pena ser Simples Nacional? CPF vs CNPJ.', icon: Landmark, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'contabil-custos', category: 'contabil', name: 'Custos e Precificação', description: 'Como calcular seu custo Fixo/Variável e definir o valor ideal do atendimento.', icon: Calculator, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'contabil-fluxo', category: 'contabil', name: 'Fluxo de Caixa (DRE)', description: 'Gestão visual do seu caixa e leitura real de Demonstração de Resultado.', icon: LineChart, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'contabil-faturamento', category: 'contabil', name: 'Convênios e Glosas', description: 'Táticas financeiras contra glosa, recurso de pagamento e gestão de convênios.', icon: Receipt, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-    { id: 'contabil-roi', category: 'contabil', name: 'Investimento (ROI) e Depreciação', description: 'Antes de comprar um equipamento caro, calcule o Retorno e o desgaste anual.', icon: TrendingUp, color: 'bg-brown-50', iconColor: 'text-gold-600' },
-  ];
-
-  const filteredAgents = agents.filter(agent => agent.category === activeCategory);
+  // Se não for Elite e o trial já expirou, block total!
+  if (!isElite && !isTrialActive) {
+     redirect('/dashboard');
+  }
 
   return (
-    <div className="min-h-screen bg-white text-brown-900">
-      <nav className="border-b border-brown-100 bg-white/50 backdrop-blur-xl sticky top-0 z-20 w-full">
-        <div className="max-w-6xl mx-auto px-6 h-20 flex flex-col sm:flex-row items-center gap-4 justify-between">
-          <div className="flex items-center gap-4 w-full sm:w-auto h-full pt-4 sm:pt-0">
-             <Link href="/dashboard" className="p-2 -ml-2 sm:-ml-0 hover:bg-brown-50 rounded-full transition-colors text-brown-500 hover:text-brown-800">
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <div className="flex items-center gap-2">
-              <BrainCircuit className="w-6 h-6 text-gold-500" />
-              <span className="font-bold text-xl tracking-tight text-brown-900 hidden sm:block">FisioHub Inteligência</span>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <main className="max-w-6xl mx-auto px-6 py-12 lg:py-16">
-        <header className="mb-10 text-center sm:text-left">
-          <h1 className="text-3xl sm:text-4xl font-black text-brown-900 tracking-tight mb-4">Comitê Executivo e Clínico</h1>
-          <p className="text-lg text-brown-600 font-medium leading-relaxed max-w-2xl">
-            Sua universidade de mentoria pessoal. Acesse especialistas em raciocínio propedêutico, assessoria contábil, jurídica, inteligência de pesquisa e negócios.
-          </p>
-        </header>
-
-        {/* TABS DE NAVEGAÇÃO HORIZONTAL */}
-        <div className="mb-12 overflow-x-auto custom-scrollbar pb-3 -mx-6 px-6 sm:mx-0 sm:px-0">
-          <div className="flex items-center gap-3 w-max">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
-                className={`px-6 py-3 rounded-full font-bold text-sm sm:text-base tracking-tight transition-all duration-300 ${
-                  activeCategory === cat.id 
-                    ? 'bg-brown-900 text-white shadow-lg' 
-                    : 'bg-brown-50 text-brown-600 hover:bg-brown-100 hover:text-brown-900'
-                }`}
-              >
-                {cat.name}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-500">
-          {filteredAgents.map((agent) => {
-            const Icon = agent.icon;
-            return (
-              <Link
-                key={agent.id}
-                href={`/chat/${agent.id}`}
-                className="group relative bg-white border border-brown-100 rounded-3xl p-8 hover:border-gold-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-gold-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl pointer-events-none" />
-                
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-6 border border-brown-100 ${agent.color} group-hover:scale-110 transition-transform duration-300`}>
-                   <Icon className={`w-7 h-7 ${agent.iconColor}`} />
-                </div>
-                
-                <h3 className="text-2xl font-bold text-brown-900 mb-3 tracking-tight">
-                  {agent.name}
-                </h3>
-                
-                <p className="text-brown-800/80 font-medium leading-relaxed flex-1">
-                  {agent.description}
-                </p>
-                
-                <div className="mt-8 flex items-center text-gold-600 font-bold text-sm tracking-wide uppercase">
-                  <span>Iniciar Sessão</span>
-                  <svg className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </svg>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </main>
-    </div>
+    <AgentsClient 
+       isElite={isElite} 
+       isTrialActive={isTrialActive} 
+       trialDaysLeft={trialDaysLeft} 
+       userEmail={user.email} 
+    />
   );
 }

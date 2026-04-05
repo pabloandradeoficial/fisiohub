@@ -21,6 +21,7 @@ export default async function DashboardPage() {
   const isElite = profile?.plan_type === 'elite_mensal' || profile?.plan_type === 'elite_anual';
 
   // Stripe Links from User parameters
+  // Stripe Links from User parameters
   const linkMensal = `https://buy.stripe.com/test_6oU28s5Bs5oOfLEgvp33W00?client_reference_id=${user.id}`;
   const linkAnual = `https://buy.stripe.com/test_3cIcN6gg68B0czs92X33W01?client_reference_id=${user.id}`;
 
@@ -30,6 +31,13 @@ export default async function DashboardPage() {
     percentage: 0,
   };
 
+  // Trial Logic
+  const createdAtDate = new Date(user.created_at);
+  const trialExpiresAt = new Date(createdAtDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+  const now = new Date();
+  const isTrialActive = now < trialExpiresAt;
+  const trialDaysLeft = Math.ceil((trialExpiresAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
   // Se o usuário não for elite, trava na tela de assinatura!
   if (!isElite) {
     return (
@@ -38,6 +46,20 @@ export default async function DashboardPage() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-96 bg-gradient-to-b from-gold-100/50 to-transparent blur-3xl -z-10" />
         
         <div className="max-w-4xl w-full space-y-10 z-10 text-center mt-12 mb-20">
+          
+          {!isElite && isTrialActive && (
+            <div className="bg-gold-50 border border-gold-200 text-brown-800 rounded-2xl p-6 text-left shadow-sm max-w-3xl mx-auto flex flex-col sm:flex-row items-center sm:items-start gap-4">
+              <div className="bg-gold-100 p-3 rounded-full shrink-0">
+                <Sparkles className="w-6 h-6 text-gold-600"/>
+              </div>
+              <div>
+                <h3 className="font-bold text-lg mb-1 text-brown-900">Seu Teste Grátis está em andamento! ({trialDaysLeft} dias restantes)</h3>
+                <p className="text-sm font-medium mb-4">Você já tem acesso VIP a alguns dos nossos melhores Agentes (como Iscas gratuitas). Volte para utilizá-los, ou aproveite para assinar e liberar TODOS de uma vez!</p>
+                <Link href="/agents" className="inline-block bg-brown-900 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md hover:bg-gold-600 transition-colors">Voltar para os Agentes Gratuitos</Link>
+              </div>
+            </div>
+          )}
+
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2 bg-gold-50 text-gold-700 px-4 py-2 rounded-full font-bold text-sm border border-gold-200 shadow-sm animate-pulse">
               <Lock className="w-4 h-4" />
