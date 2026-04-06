@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, BrainCircuit, User, Zap, Activity, Heart, Wind, Users, Shield, Sparkles, Stethoscope, Target, Combine, Search, Bone, BookOpen, ClipboardCheck, BarChart3, Scale, ShieldAlert, HeartHandshake, Briefcase, FileText, Calculator, Landmark, LineChart, Receipt, TrendingUp, Star, LogOut } from 'lucide-react';
+import { ArrowLeft, BrainCircuit, User, Zap, Activity, Heart, Wind, Users, Shield, Sparkles, Stethoscope, Target, Combine, Search, Bone, BookOpen, ClipboardCheck, BarChart3, Scale, ShieldAlert, HeartHandshake, Briefcase, FileText, Calculator, Landmark, LineChart, Receipt, TrendingUp, Star, LogOut, MessageSquare } from 'lucide-react';
 import { Lock } from 'lucide-react';
 import { createClient } from '@/utils/supabase/client';
 
@@ -104,6 +104,28 @@ export default function AgentsClient({ isElite, isTrialActive, trialDaysLeft, us
           </p>
         </header>
 
+        {/* DESAFIO SEMANAL (ISCA FREE) */}
+        <div className="mb-12 w-full bg-gradient-to-r from-brown-900 to-brown-800 rounded-3xl p-8 sm:p-10 text-white relative overflow-hidden shadow-xl border border-brown-700 group">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gold-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 group-hover:bg-gold-500/20 transition-colors duration-700"></div>
+          <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-gold-500/20 text-gold-300 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border border-gold-500/30">
+                <Sparkles className="w-3 h-3" /> Caso Clínico da Semana (Aberto)
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight mb-2">D. Maria, 68 anos - Dor Lombar e Risco de Queda</h2>
+              <p className="text-brown-200 font-medium max-w-xl text-sm sm:text-base">
+                Ajude a rastrear a fraqueza muscular e defina a conduta assertiva. Descubra como a IA pode guiar seu Raciocínio Clínico passo a passo.
+              </p>
+            </div>
+            <Link 
+              href="/chat/geriatrica" 
+              className="shrink-0 w-full sm:w-auto bg-gold-500 hover:bg-gold-400 text-brown-900 px-8 py-4 rounded-2xl font-bold transition-all shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:shadow-[0_0_30px_rgba(212,175,55,0.5)] flex items-center justify-center gap-2 hover:-translate-y-1"
+            >
+              Testar Agora <ArrowLeft className="w-5 h-5 rotate-180" />
+            </Link>
+          </div>
+        </div>
+
         {/* TABS DE NAVEGAÇÃO HORIZONTAL */}
         <div className="mb-12 overflow-x-auto custom-scrollbar pb-3 -mx-6 px-6 sm:mx-0 sm:px-0">
           <div className="flex items-center gap-3 w-max">
@@ -173,6 +195,21 @@ export default function AgentsClient({ isElite, isTrialActive, trialDaysLeft, us
           })}
         </div>
       </main>
+
+      {/* FLOAT WHATSAPP SUPORTE */}
+      <a 
+        href="https://wa.me/5535998732804?text=Ol%C3%A1%2C%20preciso%20de%20ajuda%20no%20meu%20acesso%20do%20FisioHub!" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 bg-[#25D366] text-white p-4 rounded-full shadow-[0_5px_15px_rgba(37,211,102,0.4)] hover:scale-105 hover:shadow-[0_8px_25px_rgba(37,211,102,0.5)] transition-all z-50 flex items-center gap-3 group"
+        title="Suporte Técnico"
+      >
+        <MessageSquare className="w-6 h-6" />
+        <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 ease-in-out whitespace-nowrap font-bold text-sm">
+          Falar com Suporte
+        </span>
+      </a>
+
     </div>
   );
 }
