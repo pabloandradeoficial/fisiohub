@@ -403,7 +403,7 @@ export default function ChatClient() {
   };
 
   return (
-    <div className="flex h-screen bg-brown-50 overflow-hidden font-sans">
+    <div className="flex h-[100dvh] bg-brown-50 overflow-hidden font-sans">
       
       {/* SIDEBAR */}
       <div className={`fixed inset-y-0 left-0 z-40 w-72 bg-brown-900 text-white transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:flex-shrink-0 transition-transform duration-300 ease-in-out flex flex-col shadow-2xl`}>

@@ -11,7 +11,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-white text-brown-900 font-sans selection:bg-gold-500 selection:text-white">
       
       {/* Navigation */}
-      <nav className="fixed w-full top-0 bg-white/90 backdrop-blur-md border-b border-brown-100 z-50">
+      <nav className="fixed w-full top-0 bg-white/90 backdrop-blur-md border-b border-brown-100 z-50 pwa-hidden">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-2 text-2xl font-black tracking-tight text-brown-900">
             <ActivitySquare className="w-8 h-8 text-gold-500" />

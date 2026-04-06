@@ -53,3 +53,15 @@ input, textarea {
   user-select: text;
   -webkit-user-select: text;
 }
+
+/* Remover delay de 300ms dos botões nativos Mobile */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+}
+
+/* Esconder elementos (como navbars) quando estiver rodando em "App Mode" (StandAlone PWA) */
+@media all and (display-mode: standalone), (display-mode: fullscreen) {
+  .pwa-hidden {
+    display: none !important;
+  }
+}

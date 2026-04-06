@@ -70,7 +70,7 @@ export default function AgentsClient({ isElite, isTrialActive, trialDaysLeft, us
 
   return (
     <div className="min-h-screen bg-white text-brown-900">
-      <nav className="border-b border-brown-100 bg-white/50 backdrop-blur-xl sticky top-0 z-20 w-full">
+      <nav className="border-b border-brown-100 bg-white/50 backdrop-blur-xl sticky top-0 z-20 w-full pwa-hidden">
         {/* Banner Freemium Trial */}
         {!isElite && isTrialActive && (
           <div className="bg-gradient-to-r from-gold-500 to-gold-600 text-white py-2 px-4 text-center font-bold text-sm tracking-tight border-b border-gold-600/30">
@@ -154,7 +154,7 @@ export default function AgentsClient({ isElite, isTrialActive, trialDaysLeft, us
               <Link
                 key={agent.id}
                 href={isLocked ? "/dashboard" : `/chat/${agent.id}`}
-                className={`group relative bg-white border border-brown-100 rounded-3xl p-8 transition-all duration-300 flex flex-col ${isLocked ? 'opacity-70 hover:opacity-100' : 'hover:border-gold-300 hover:shadow-xl hover:-translate-y-1'}`}
+                className={`group relative bg-white border border-brown-100 rounded-3xl p-8 transition-all duration-300 flex flex-col active:scale-[0.98] active:brightness-95 touch-manipulation ${isLocked ? 'opacity-70 hover:opacity-100' : 'hover:border-gold-300 hover:shadow-xl hover:-translate-y-1'}`}
               >
                 {!isLocked && <div className="absolute inset-0 bg-gradient-to-br from-gold-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl pointer-events-none" />}
                 
