@@ -153,7 +153,7 @@ export default async function DashboardPage() {
         </header>
 
         {/* Progress Widget */}
-        <section className="bg-white p-8 rounded-2xl shadow-sm border border-[#E8E3DF] flex items-center gap-8">
+        <section className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-[#E8E3DF] flex flex-col sm:flex-row items-center text-center sm:text-left gap-6 sm:gap-8">
           <div className="relative w-32 h-32 shrink-0">
             {/* Simple CSS Donut */}
             <svg viewBox="0 0 36 36" className="w-full h-full transform -rotate-90">
@@ -183,14 +183,14 @@ export default async function DashboardPage() {
               <h2 className="text-xl font-semibold text-[#3A2E27]">Progresso do Módulo Atual</h2>
               <p className="text-[#8E7D73]">Ortopedia Clínica & Traumatologia</p>
             </div>
-            <div className="flex items-center gap-4 text-sm text-[#8E7D73] font-medium">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-4 text-sm text-[#8E7D73] font-medium justify-center sm:justify-start">
               <span className="flex items-center gap-1"><CheckCircle className="w-4 h-4 text-[#D4AF37]" /> {mockProgress.completedClasses} aulas concluídas</span>
               <span className="flex items-center gap-1"><PlayCircle className="w-4 h-4 text-[#C4B7B0]" /> {mockProgress.totalClasses} no total</span>
             </div>
           </div>
-          <div className="shrink-0">
+          <div className="shrink-0 w-full sm:w-auto">
             <div 
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gray-200 text-gray-500 font-bold rounded-xl shadow-inner cursor-not-allowed"
+              className="inline-flex w-full sm:w-auto items-center justify-center gap-2 px-8 py-4 bg-gray-200 text-gray-500 font-bold rounded-xl shadow-inner cursor-not-allowed"
             >
               <Lock className="w-4 h-4" />
               EM BREVE !

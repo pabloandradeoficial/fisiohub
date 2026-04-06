@@ -12,16 +12,16 @@ export default function LandingPage() {
       
       {/* Navigation */}
       <nav className="fixed w-full top-0 bg-white/90 backdrop-blur-md border-b border-brown-100 z-50 pwa-hidden">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-2xl font-black tracking-tight text-brown-900">
-            <ActivitySquare className="w-8 h-8 text-gold-500" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+          <div className="flex items-center gap-1 sm:gap-2 text-xl sm:text-2xl font-black tracking-tight text-brown-900 shrink-0">
+            <ActivitySquare className="w-6 h-6 sm:w-8 sm:h-8 text-gold-500" />
             <span>Fisio<span className="text-gold-500">Hub</span></span>
           </div>
-          <div className="flex items-center gap-4">
-            <Link href="/login" className="text-sm font-semibold text-brown-800 hover:text-gold-600 transition-colors">
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+            <Link href="/login" className="text-[14px] sm:text-sm font-semibold text-brown-800 hover:text-gold-600 transition-colors">
               Entrar
             </Link>
-            <Link href="/register" className="text-sm font-bold text-white bg-brown-900 px-6 py-2.5 rounded-full hover:bg-brown-800 transition-colors shadow-sm">
+            <Link href="/register" className="text-[12px] sm:text-sm font-bold text-white bg-brown-900 px-4 sm:px-6 py-2 sm:py-2.5 rounded-full hover:bg-brown-800 transition-colors shadow-sm whitespace-nowrap">
               Criar Conta Elite
             </Link>
           </div>
@@ -315,8 +315,8 @@ export default function LandingPage() {
             </div>
 
             {/* Anual Card (Destaque) */}
-            <div className="bg-brown-900 rounded-[2rem] p-10 border border-gold-500/30 shadow-2xl relative flex flex-col transform md:-translate-y-4">
-              <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-gold-500 text-white px-6 py-2 rounded-full text-sm font-black uppercase tracking-wider shadow-lg">
+            <div className="bg-brown-900 rounded-[2rem] p-10 border border-gold-500/30 shadow-2xl relative flex flex-col transform md:-translate-y-4 mt-6 md:mt-0">
+              <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-gold-500 text-white px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-sm font-black uppercase tracking-wider shadow-lg whitespace-nowrap">
                 Recomendado (Melhor Valor)
               </div>
 

@@ -622,10 +622,25 @@ export default function ChatClient() {
                   )}
 
                   {msg.role === 'model' && (
-                    <div className="flex items-center gap-2 mt-2 ml-1 opacity-50 hover:opacity-100 transition-opacity">
-                      <span className="text-[10px] font-bold text-brown-500 mr-2">O QUE ACHOU?</span>
-                      <button onClick={(e) => { const el = e.currentTarget; el.innerHTML = '<span class="text-xs">Obrigado!</span>'; el.classList.add('text-gold-600'); setTimeout(() => el.style.opacity = '0', 2000)}} className="p-1 hover:bg-brown-100 rounded text-brown-600 transition-colors"><ThumbsUp className="w-3.5 h-3.5" /></button>
-                      <button onClick={(e) => { const el = e.currentTarget; el.innerHTML = '<span class="text-xs font-medium">Revisando</span>'; el.classList.add('text-brown-700'); setTimeout(() => el.style.opacity = '0', 2000)}} className="p-1 hover:bg-brown-100 rounded text-brown-600 transition-colors"><ThumbsDown className="w-3.5 h-3.5" /></button>
+                    <div className="flex flex-wrap items-center gap-3 mt-2 ml-1">
+                      <button onClick={(e) => { 
+                          if(activeSessionId) {
+                            toggleFavorite(e, activeSessionId);
+                            const el = e.currentTarget;
+                            const originalHtml = el.innerHTML;
+                            el.innerHTML = '<span class="text-xs font-bold px-1 text-gold-600">Salvo na Biblioteca!</span>';
+                            setTimeout(() => { if(el) el.innerHTML = originalHtml; }, 2500);
+                          }
+                        }} 
+                        className="flex items-center gap-1.5 p-1.5 px-3 border border-brown-200 bg-white hover:bg-gold-50 hover:border-gold-300 rounded-lg text-brown-600 transition-all shadow-sm active:scale-95"
+                      >
+                        <BookOpen className="w-3.5 h-3.5 text-gold-600" /> <span className="text-[10px] sm:text-xs font-bold text-brown-800">SALVAR NA BIBLIOTECA</span>
+                      </button>
+
+                      <div className="flex items-center gap-1 opacity-50 hover:opacity-100 transition-opacity ml-auto">
+                        <button onClick={(e) => { const el = e.currentTarget; el.innerHTML = '<span class="text-xs">Obrigado!</span>'; el.classList.add('text-gold-600'); setTimeout(() => el.style.opacity = '0', 2000)}} className="p-1.5 hover:bg-brown-100 rounded text-brown-600 transition-colors"><ThumbsUp className="w-3.5 h-3.5" /></button>
+                        <button onClick={(e) => { const el = e.currentTarget; el.innerHTML = '<span class="text-xs font-medium">Revisando</span>'; el.classList.add('text-brown-700'); setTimeout(() => el.style.opacity = '0', 2000)}} className="p-1.5 hover:bg-brown-100 rounded text-brown-600 transition-colors"><ThumbsDown className="w-3.5 h-3.5" /></button>
+                      </div>
                     </div>
                   )}
                 </div>
