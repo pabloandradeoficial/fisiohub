@@ -32,11 +32,16 @@ export default function BibliotecaPage() {
       }
       setUser(session.user);
 
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('chat_sessions')
         .select('*')
         .eq('user_id', session.user.id)
-        .order('updated_at', { ascending: false });
+        .eq('is_favorite', true)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error("Error fetching library sessions:", error);
+      }
 
       if (data) {
         setSessions(data);
@@ -118,7 +123,7 @@ export default function BibliotecaPage() {
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#D4AF37] uppercase tracking-widest bg-[#D4AF37]/10 px-2 py-0.5 rounded">
                       <Clock className="w-3 h-3" />
-                      {new Date(session.updated_at).toLocaleDateString('pt-BR')}
+                      {new Date(session.created_at).toLocaleDateString('pt-BR')}
                     </div>
                   </div>
                   <h3 className="font-bold text-[#3A2E27] text-lg leading-tight group-hover:text-[#D4AF37] transition-colors line-clamp-3">
