@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   ArrowRight, CheckCircle2, PlayCircle, BrainCircuit, ActivitySquare, 
   Award, BookOpen, GraduationCap, ShieldCheck, Lock, ChevronRight, Stethoscope, BriefcaseMedical, 
@@ -200,9 +201,12 @@ export default function LandingPage() {
             
             <div className="lg:w-1/3 relative">
               <div className="absolute -inset-4 bg-gradient-to-tr from-gold-400 to-transparent opacity-20 rounded-full blur-xl"></div>
-              <img 
+              <Image 
                 src="/pablo.jpg.png" 
                 alt="Dr. Pablo Andrade" 
+                width={600}
+                height={750}
+                priority
                 className="relative rounded-3xl object-cover shadow-2xl border-4 border-white aspect-[4/5] object-top z-10 w-full"
               />
               <div className="absolute -right-4 top-8 bg-white p-4 rounded-2xl shadow-xl border border-brown-100 z-20">

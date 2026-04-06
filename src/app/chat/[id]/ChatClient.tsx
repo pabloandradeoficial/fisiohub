@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Send, BrainCircuit, Loader2, Sparkles, User, PlusCircle, MessageSquare, Menu, X, Trash2, Star, FolderPlus, Folder, ChevronDown, ChevronRight } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { submitClinicalReasoning } from '@/app/actions/ai-feedback';
 import { useParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 
@@ -320,20 +319,44 @@ export default function ChatClient() {
     updateSessionMessages(activeSessionId, updatedHistory, dynamicTitle);
 
     try {
-      const response = await submitClinicalReasoning(agentId, updatedHistory);
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agentId, history: updatedHistory })
+      });
+
+      if (!res.ok) throw new Error('Falha na resposta do servidor.');
+
+      const reader = res.body?.getReader();
+      const decoder = new TextDecoder();
+      let completeText = '';
+
+      // Adiciona uma mensagem temporária do model que será preenchida
+      const streamingHistory: ChatMessage[] = [...updatedHistory, { role: 'model', content: '' }];
+      updateSessionMessages(activeSessionId, streamingHistory, dynamicTitle);
       
-      const newAssistantMsgContent = response.success && response.feedback ? response.feedback : (response.error || 'Erro no processo.');
-      
+      setIsLoading(false); // Loading block desativa pois o stream vai iniciar na UI
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value, { stream: true });
+          completeText += chunk;
+          
+          streamingHistory[streamingHistory.length - 1].content = completeText;
+          updateSessionMessages(activeSessionId, [...streamingHistory], dynamicTitle);
+        }
+      }
+
       await supabase.from('chat_messages').insert({
         session_id: activeSessionId,
         role: 'model',
-        content: newAssistantMsgContent
+        content: completeText
       });
 
-      updateSessionMessages(activeSessionId, [...updatedHistory, { role: 'model', content: newAssistantMsgContent }]);
     } catch (error) {
-      updateSessionMessages(activeSessionId, [...updatedHistory, { role: 'model', content: 'Erro de conexão com o Agente IA.' }]);
-    } finally {
+      updateSessionMessages(activeSessionId, [...updatedHistory, { role: 'model', content: 'Erro de conexão com o Agente IA.' }], dynamicTitle);
       setIsLoading(false);
     }
   };
