@@ -2,8 +2,9 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Send, BrainCircuit, Loader2, Sparkles, User, PlusCircle, MessageSquare, Menu, X, Trash2, Star, FolderPlus, Folder, ChevronDown, ChevronRight, BookOpen, Target, Trophy, FileText, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Send, BrainCircuit, Loader2, Sparkles, User, PlusCircle, MessageSquare, Menu, X, Trash2, Star, FolderPlus, Folder, ChevronDown, ChevronRight, BookOpen, Target, Trophy, FileText, CheckCircle2, ThumbsUp, ThumbsDown, Award, LogOut } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import confetti from 'canvas-confetti';
 import { useParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
 
@@ -313,6 +314,7 @@ export default function ChatClient() {
     setInput('');
     setIsLoading(true);
 
+    let maxLevelHit = false;
     if (userStats && user?.id) {
        const newCasos = userStats.casos_resolvidos + 1;
        const newPontos = userStats.pontos + 10;
@@ -322,13 +324,19 @@ export default function ChatClient() {
        if (newCasos >= 15) newNivel = 'Nível 3: Fisio Pleno';
        if (newCasos >= 30) newNivel = 'Nível 4: Fisio Sênior';
        if (newCasos >= 50) newNivel = 'Nível 5: Titular Clínico';
-       if (newCasos >= 100) newNivel = 'Mestre PBE';
+       if (newCasos >= 100) {
+          newNivel = 'Mestre PBE';
+          if (userStats.casos_resolvidos < 100) maxLevelHit = true; 
+       }
 
-       setUserStats({ ...userStats, pontos: newPontos, casos_resolvidos: newCasos, nivel_raciocinio: newNivel });
+       const newStats = { user_id: user.id, pontos: newPontos, casos_resolvidos: newCasos, nivel_raciocinio: newNivel };
+       setUserStats(newStats);
        
        supabase.from('user_stats')
-         .update({ pontos: newPontos, casos_resolvidos: newCasos, nivel_raciocinio: newNivel })
-         .eq('user_id', user.id).then();
+         .upsert(newStats, { onConflict: 'user_id' })
+         .then(({ error }) => {
+           if (error) console.error("Error upserting stats:", error);
+         });
     }
     
     // Auto-gerar mini-titulo para a sessão caso seja a primeira vez que usuário envia algo
@@ -409,10 +417,16 @@ export default function ChatClient() {
               <BookOpen className="w-4 h-4" />
               <span className="font-semibold text-[13px] tracking-wide">Minha Biblioteca</span>
             </Link>
+            <button onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login'; }} className="flex items-center gap-2 text-red-400/80 hover:text-red-400 transition-colors mt-1 text-left">
+              <LogOut className="w-4 h-4" />
+              <span className="font-semibold text-[12px] tracking-wide uppercase">Sair (Logout)</span>
+            </button>
           </div>
-          <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 text-white/50 hover:text-white">
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-3">
+            <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 text-white/50 hover:text-white">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         <div className="p-4">
@@ -604,6 +618,14 @@ export default function ChatClient() {
                           {references.trim()}
                         </ReactMarkdown>
                       </div>
+                    </div>
+                  )}
+
+                  {msg.role === 'model' && (
+                    <div className="flex items-center gap-2 mt-2 ml-1 opacity-50 hover:opacity-100 transition-opacity">
+                      <span className="text-[10px] font-bold text-brown-500 mr-2">O QUE ACHOU?</span>
+                      <button onClick={(e) => { const el = e.currentTarget; el.innerHTML = '<span class="text-xs">Obrigado!</span>'; el.classList.add('text-gold-600'); setTimeout(() => el.style.opacity = '0', 2000)}} className="p-1 hover:bg-brown-100 rounded text-brown-600 transition-colors"><ThumbsUp className="w-3.5 h-3.5" /></button>
+                      <button onClick={(e) => { const el = e.currentTarget; el.innerHTML = '<span class="text-xs font-medium">Revisando</span>'; el.classList.add('text-brown-700'); setTimeout(() => el.style.opacity = '0', 2000)}} className="p-1 hover:bg-brown-100 rounded text-brown-600 transition-colors"><ThumbsDown className="w-3.5 h-3.5" /></button>
                     </div>
                   )}
                 </div>

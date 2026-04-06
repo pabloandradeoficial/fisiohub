@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, BrainCircuit, User, Zap, Activity, Heart, Wind, Users, Shield, Sparkles, Stethoscope, Target, Combine, Search, Bone, BookOpen, ClipboardCheck, BarChart3, Scale, ShieldAlert, HeartHandshake, Briefcase, FileText, Calculator, Landmark, LineChart, Receipt, TrendingUp, Star } from 'lucide-react';
-
-import { Lock } from 'lucide-react'; // added Lock icon
+import { ArrowLeft, BrainCircuit, User, Zap, Activity, Heart, Wind, Users, Shield, Sparkles, Stethoscope, Target, Combine, Search, Bone, BookOpen, ClipboardCheck, BarChart3, Scale, ShieldAlert, HeartHandshake, Briefcase, FileText, Calculator, Landmark, LineChart, Receipt, TrendingUp, Star, LogOut } from 'lucide-react';
+import { Lock } from 'lucide-react';
+import { createClient } from '@/utils/supabase/client';
 
 interface AgentsClientProps {
   isElite: boolean;
@@ -23,6 +23,8 @@ export default function AgentsClient({ isElite, isTrialActive, trialDaysLeft, us
     { id: 'juridico', name: 'Jurídico' },
     { id: 'contabil', name: 'Contábil' },
   ];
+
+  const supabase = createClient();
 
   const agents = [
     // --- PRÁTICA CLÍNICA ---
@@ -87,6 +89,10 @@ export default function AgentsClient({ isElite, isTrialActive, trialDaysLeft, us
               <span className="font-bold text-xl tracking-tight text-brown-900 hidden sm:block">FisioHub Inteligência</span>
             </div>
           </div>
+          
+          <button onClick={async () => { await supabase.auth.signOut(); window.location.href = '/login'; }} className="flex items-center gap-2 text-brown-500 hover:text-red-500 transition-colors bg-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm border border-brown-100">
+            Sair <LogOut className="w-4 h-4" />
+          </button>
         </div>
       </nav>
 
