@@ -14,7 +14,9 @@ export const viewport = {
   themeColor: "#3E2723",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1, // Impede zoom irritante em formulários no iOS
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
 };
 
 export const metadata: Metadata = {
@@ -24,6 +26,12 @@ export const metadata: Metadata = {
   },
   description: "A ponte entre o protocolo e a cura através do raciocínio clínico. Inteligência Artificial avançada em fisioterapia baseada em evidências.",
   keywords: ["fisioterapia", "raciocínio clínico", "mentoria", "inteligência artificial", "pablo andrade", "diagnóstico ortopédico"],
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "FisioHub",
+  },
   openGraph: {
     title: "FisioHub Elite | Mentoria e Simulação Clínica",
     description: "A ponte entre o protocolo e a cura através do raciocínio clínico.",

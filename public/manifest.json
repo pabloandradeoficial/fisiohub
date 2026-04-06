@@ -1,0 +1,17 @@
+{
+  "name": "FisioHub Elite",
+  "short_name": "FisioHub",
+  "description": "Inteligência Artificial e Mentoria Clínica Avançada para Fisioterapeutas.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3E2723",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    }
+  ]
+}

@@ -595,13 +595,13 @@ export default function ChatClient() {
                       : 'bg-brown-900 border-brown-800 text-white rounded-tr-none'
                   }`}>
                     {msg.role === 'model' ? (
-                    <div className="prose prose-sm sm:prose-base prose-brown text-brown-800 marker:text-gold-500 max-w-none prose-p:leading-relaxed prose-strong:font-bold prose-strong:text-brown-900 prose-ul:list-disc prose-ol:list-decimal">
+                    <div className="prose prose-sm sm:prose-base prose-brown text-brown-800 marker:text-gold-500 max-w-none prose-p:leading-relaxed prose-strong:font-bold prose-strong:text-brown-900 prose-ul:list-disc prose-ol:list-decimal selectable-text">
                       <ReactMarkdown>
                         {mainText}
                       </ReactMarkdown>
                     </div>
                   ) : (
-                      <p className="whitespace-pre-wrap font-medium">{msg.content}</p>
+                      <p className="whitespace-pre-wrap font-medium selectable-text">{msg.content}</p>
                     )}
                   </div>
 
@@ -612,7 +612,7 @@ export default function ChatClient() {
                       <div className="flex items-center gap-2 text-xs font-bold text-gold-600 uppercase tracking-widest mb-2 pl-2">
                         <BookOpen className="w-4 h-4" /> Referencial Teórico Avalizado
                       </div>
-                      <div className="prose prose-sm prose-brown prose-p:text-xs prose-p:m-0 prose-p:leading-relaxed text-brown-600 pl-2 prose-a:text-gold-600 prose-a:underline hover:prose-a:text-gold-700 prose-a:font-semibold">
+                      <div className="prose prose-sm prose-brown prose-p:text-xs prose-p:m-0 prose-p:leading-relaxed text-brown-600 pl-2 prose-a:text-gold-600 prose-a:underline hover:prose-a:text-gold-700 prose-a:font-semibold selectable-text">
                         {/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
                         <ReactMarkdown components={{ a: ({node, ...props}) => <a {...props} target="_blank" rel="noopener noreferrer" /> }}>
                           {references.trim()}
