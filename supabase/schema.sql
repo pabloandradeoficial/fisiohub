@@ -96,3 +96,32 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
+
+-- Create Gamification Stats Table
+CREATE TABLE public.user_stats (
+  user_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE PRIMARY KEY,
+  casos_resolvidos integer DEFAULT 0,
+  consultas_pbe integer DEFAULT 0,
+  pontos integer DEFAULT 0,
+  nivel_raciocinio text DEFAULT 'Interno',
+  updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.user_stats ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users view own stats" ON public.user_stats FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users modify own stats" ON public.user_stats FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users insert own stats" ON public.user_stats FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Hook para criar stats para cada novo user
+CREATE OR REPLACE FUNCTION public.handle_new_user_stats()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.user_stats (user_id) VALUES (new.id);
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER on_profile_created
+  AFTER INSERT ON public.profiles
+  FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user_stats();

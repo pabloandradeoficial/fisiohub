@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Send, BrainCircuit, Loader2, Sparkles, User, PlusCircle, MessageSquare, Menu, X, Trash2, Star, FolderPlus, Folder, ChevronDown, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Send, BrainCircuit, Loader2, Sparkles, User, PlusCircle, MessageSquare, Menu, X, Trash2, Star, FolderPlus, Folder, ChevronDown, ChevronRight, BookOpen, Target, Trophy, FileText, CheckCircle2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { useParams } from 'next/navigation';
 import { createClient } from '@/utils/supabase/client';
@@ -67,6 +67,8 @@ export default function ChatClient() {
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [folders, setFolders] = useState<ChatFolder[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [userStats, setUserStats] = useState<any>(null);
   
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -83,6 +85,19 @@ export default function ChatClient() {
       if (!session) return;
       setUser(session.user);
       const currentUserId = session.user.id;
+
+      // Fetch Stats
+      const { data: dbStats } = await supabase
+        .from('user_stats')
+        .select('*')
+        .eq('user_id', currentUserId)
+        .single();
+      
+      if (dbStats) {
+        setUserStats(dbStats);
+      } else {
+         setUserStats({ casos_resolvidos: 0, pontos: 0, nivel_raciocinio: 'Nível 1: Residente' });
+      }
 
       // Fetch Folders
       const { data: dbFolders } = await supabase
@@ -297,6 +312,24 @@ export default function ChatClient() {
     const userMsg = input.trim();
     setInput('');
     setIsLoading(true);
+
+    if (userStats && user?.id) {
+       const newCasos = userStats.casos_resolvidos + 1;
+       const newPontos = userStats.pontos + 10;
+       
+       let newNivel = userStats.nivel_raciocinio;
+       if (newCasos >= 5) newNivel = 'Nível 2: Fisio Júnior';
+       if (newCasos >= 15) newNivel = 'Nível 3: Fisio Pleno';
+       if (newCasos >= 30) newNivel = 'Nível 4: Fisio Sênior';
+       if (newCasos >= 50) newNivel = 'Nível 5: Titular Clínico';
+       if (newCasos >= 100) newNivel = 'Mestre PBE';
+
+       setUserStats({ ...userStats, pontos: newPontos, casos_resolvidos: newCasos, nivel_raciocinio: newNivel });
+       
+       supabase.from('user_stats')
+         .update({ pontos: newPontos, casos_resolvidos: newCasos, nivel_raciocinio: newNivel })
+         .eq('user_id', user.id).then();
+    }
     
     // Auto-gerar mini-titulo para a sessão caso seja a primeira vez que usuário envia algo
     let dynamicTitle = undefined;
@@ -384,6 +417,22 @@ export default function ChatClient() {
             <PlusCircle className="w-5 h-5" />
             Iniciar Novo Caso
           </button>
+        </div>
+
+        {/* Gamification Dashboard */}
+        <div className="px-5 py-3 mx-4 mb-2 bg-white/5 border border-white/10 rounded-2xl">
+           <div className="flex items-center justify-between mb-2">
+             <div className="flex items-center gap-2 text-xs font-bold text-gold-400 uppercase tracking-widest">
+               <Trophy className="w-4 h-4" /> {userStats?.nivel_raciocinio || 'Carregando...'}
+             </div>
+           </div>
+           <div className="w-full bg-white/10 rounded-full h-1.5 mb-2 relative overflow-hidden">
+             <div className="bg-gold-500 h-1.5 rounded-full absolute top-0 left-0" style={{ width: `${Math.min(((userStats?.casos_resolvidos || 0) % 20) * 5, 100)}%` }}></div>
+           </div>
+           <div className="flex justify-between text-[10px] text-white/50 font-medium">
+             <span>{userStats?.casos_resolvidos || 0} Casos Resolvidos</span>
+             <span>XP: {userStats?.pontos || 0}</span>
+           </div>
         </div>
 
         <div className="flex-1 overflow-y-auto px-3 pb-4 custom-scrollbar">
@@ -500,7 +549,13 @@ export default function ChatClient() {
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 pb-64">
           <div className="max-w-4xl mx-auto space-y-8">
             
-            {activeSession?.messages.map((msg, idx) => (
+            {activeSession?.messages.map((msg, idx) => {
+              // Parse Citations Block
+              const contentParts = msg.content.split(/(?:###\s)?Referências Científicas:?|(?:###\s)?Referências Bibliográficas:?|(?:###\s)?Evidência \/ Legislação Aplicada:?/i);
+              const mainText = contentParts[0];
+              const references = contentParts.length > 1 ? contentParts[1] : null;
+
+              return (
               <div key={idx} className={`flex gap-3 sm:gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                 
                 {/* Avatar */}
@@ -512,55 +567,94 @@ export default function ChatClient() {
                   {msg.role === 'model' ? <Sparkles className="w-4 h-4 sm:w-5 sm:h-5" /> : <User className="w-4 h-4 sm:w-5 sm:h-5" />}
                 </div>
 
-                {/* Message Bubble */}
-                <div className={`max-w-[85%] sm:max-w-[75%] rounded-3xl p-4 sm:p-6 shadow-sm border ${
-                  msg.role === 'model'
-                    ? 'bg-brown-50/50 border-brown-100 rounded-tl-none'
-                    : 'bg-brown-900 border-brown-800 text-white rounded-tr-none'
-                }`}>
-                  {msg.role === 'model' ? (
-                  <div className="prose prose-sm sm:prose-base prose-brown text-brown-800 marker:text-gold-500 max-w-none prose-p:leading-relaxed prose-strong:font-bold prose-strong:text-brown-900 prose-ul:list-disc prose-ol:list-decimal">
-                    <ReactMarkdown>
-                      {msg.content}
-                    </ReactMarkdown>
+                {/* Message Bubble + Citations Container */}
+                <div className="flex flex-col gap-2 max-w-[85%] sm:max-w-[75%]">
+                  <div className={`rounded-3xl p-4 sm:p-6 shadow-sm border ${
+                    msg.role === 'model'
+                      ? 'bg-brown-50/50 border-brown-100 rounded-tl-none'
+                      : 'bg-brown-900 border-brown-800 text-white rounded-tr-none'
+                  }`}>
+                    {msg.role === 'model' ? (
+                    <div className="prose prose-sm sm:prose-base prose-brown text-brown-800 marker:text-gold-500 max-w-none prose-p:leading-relaxed prose-strong:font-bold prose-strong:text-brown-900 prose-ul:list-disc prose-ol:list-decimal">
+                      <ReactMarkdown>
+                        {mainText}
+                      </ReactMarkdown>
+                    </div>
+                  ) : (
+                      <p className="whitespace-pre-wrap font-medium">{msg.content}</p>
+                    )}
                   </div>
-                ) : (
-                    <p className="whitespace-pre-wrap font-medium">{msg.content}</p>
+
+                  {/* Render Citation Card if AI appended it */}
+                  {msg.role === 'model' && references && references.trim().length > 0 && (
+                    <div className="mt-2 bg-white border border-brown-200 rounded-2xl p-4 shadow-sm relative overflow-hidden group">
+                      <div className="absolute top-0 left-0 w-1 h-full bg-gold-400"></div>
+                      <div className="flex items-center gap-2 text-xs font-bold text-gold-600 uppercase tracking-widest mb-2 pl-2">
+                        <BookOpen className="w-4 h-4" /> Referencial Teórico Avalizado
+                      </div>
+                      <div className="prose prose-sm prose-brown prose-p:text-xs prose-p:m-0 prose-p:leading-relaxed text-brown-600 pl-2">
+                        <ReactMarkdown>{references.trim()}</ReactMarkdown>
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
-            ))}
+            )})}
 
             {/* Dicas de Extração (Aparece apenas no início de um Novo Caso) */}
             {activeSession?.messages.length === 1 && (
-              <div className="w-full max-w-2xl bg-white border border-brown-200/50 p-6 rounded-2xl shadow-[0_4px_20px_-4px_rgba(212,175,55,0.05)] text-left mt-8 mb-4 ml-14">
-                <div className="flex items-center gap-2 mb-4">
-                  <Sparkles className="w-5 h-5 text-gold-600" />
-                  <h3 className="font-semibold text-brown-900">Como extrair o máximo do seu Mentor:</h3>
+              <div className="w-full max-w-3xl text-left mt-8 mb-4 ml-12 sm:ml-14">
+                
+                {/* Dicas Socráticas */}
+                <div className="bg-white border border-brown-200/50 p-6 rounded-2xl shadow-[0_4px_20px_-4px_rgba(212,175,55,0.05)] mb-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Sparkles className="w-5 h-5 text-gold-600" />
+                    <h3 className="font-semibold text-brown-900">Como extrair o máximo do seu Mentor:</h3>
+                  </div>
+                  <ul className="space-y-4 text-sm text-brown-700">
+                    <li className="flex gap-3">
+                      <div className="mt-0.5 bg-gold-100 text-gold-800 rounded w-5 h-5 flex items-center justify-center text-xs font-bold shrink-0">1</div>
+                      <div>
+                        <strong className="text-brown-900 block mb-0.5">Nutra com Contexto Clínico</strong>
+                        Evite perguntas abertas. Ao invés disso, use detalhes: <span className="italic text-brown-500">&quot;Paciente mulher, 40 anos, dor patelofemoral ao descer escadas. Monte uma evolução de carga.&quot;</span>
+                      </div>
+                    </li>
+                    <li className="flex gap-3">
+                      <div className="mt-0.5 bg-gold-100 text-gold-800 rounded w-5 h-5 flex items-center justify-center text-xs font-bold shrink-0">2</div>
+                      <div>
+                        <strong className="text-brown-900 block mb-0.5">Entre no Jogo Socrático</strong>
+                        O agente foi treinado para fazer você pensar profundamente. Se ele devolver a bola pra você com uma pergunta, arrisque o raciocínio! Ele irá corrigir você usando as diretrizes PBE.
+                      </div>
+                    </li>
+                  </ul>
                 </div>
-                <ul className="space-y-4 text-sm text-brown-700">
-                  <li className="flex gap-3">
-                    <div className="mt-0.5 bg-gold-100 text-gold-800 rounded w-5 h-5 flex items-center justify-center text-xs font-bold shrink-0">1</div>
-                    <div>
-                      <strong className="text-brown-900 block mb-0.5">Nutra com Contexto Clínico</strong>
-                      Evite perguntas abertas. Ao invés disso, use detalhes: <span className="italic text-brown-500">"Paciente mulher, 40 anos, dor patelofemoral ao descer escadas. Monte uma evolução de carga para 4 semanas."</span>
-                    </div>
-                  </li>
-                  <li className="flex gap-3">
-                    <div className="mt-0.5 bg-gold-100 text-gold-800 rounded w-5 h-5 flex items-center justify-center text-xs font-bold shrink-0">2</div>
-                    <div>
-                      <strong className="text-brown-900 block mb-0.5">Comande o Formato Visual</strong>
-                      Para evitar textos colossais, adicione ao seu pedido comandos estruturantes: <span className="italic text-brown-500">"Me dê a resposta em tópicos sucintos"</span>, <span className="italic text-brown-500">"Resuma em tabela"</span> ou <span className="italic text-brown-500">"Seja muito objetivo"</span>.
-                    </div>
-                  </li>
-                  <li className="flex gap-3">
-                    <div className="mt-0.5 bg-gold-100 text-gold-800 rounded w-5 h-5 flex items-center justify-center text-xs font-bold shrink-0">3</div>
-                    <div>
-                      <strong className="text-brown-900 block mb-0.5">Entre no Jogo Socrático</strong>
-                      O agente foi treinado para fazer você pensar profundamente. Se ele devolver a bola pra você com uma pergunta, arrisque o raciocínio! Ele irá corrigir você usando a literatura.
-                    </div>
-                  </li>
-                </ul>
+
+                {/* Quick Actions Onboarding */}
+                <div>
+                   <h4 className="text-xs font-bold text-brown-400 uppercase tracking-widest mb-3 flex items-center gap-2 ml-2">
+                     <Target className="w-4 h-4" /> Quebre o Gelo (Ações Rápidas)
+                   </h4>
+                   <div className="flex flex-wrap gap-2">
+                     <button 
+                       onClick={() => setInput('Estou avaliando um paciente de 55 anos com suspeita de Capsulite Adesiva (Ombro Congelado) na Fase 2 (Congelamento). O que a literatura mais recente do PEDro diz sobre a agressividade da mobilização nessa fase?')}
+                       className="bg-white hover:bg-gold-50 border border-brown-200 hover:border-gold-300 text-brown-700 hover:text-gold-700 px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-sm active:scale-95 text-left"
+                     >
+                       Simular Caso: Ombro Congelado
+                     </button>
+                     <button 
+                       onClick={() => setInput('Pode analisar a validade clínica e a especificidade do Teste de Lachman comparado à Gaveta Anterior para ruptura de LCA?')}
+                       className="bg-white hover:bg-gold-50 border border-brown-200 hover:border-gold-300 text-brown-700 hover:text-gold-700 px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-sm active:scale-95 text-left"
+                     >
+                       Analisar Teste de Lachman
+                     </button>
+                     <button 
+                       onClick={() => setInput('Paciente de 40 anos apresenta dor lombar irradiada até o pé com sinal de Lasègue positivo. Quais as melhores evidências hoje para diferencial entre Hérnia Discal verdadeira e Síndrome do Piriforme?')}
+                       className="bg-white hover:bg-gold-50 border border-brown-200 hover:border-gold-300 text-brown-700 hover:text-gold-700 px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-sm active:scale-95 text-left"
+                     >
+                       Diferencial: Lombar Irradiada
+                     </button>
+                   </div>
+                </div>
               </div>
             )}
 
