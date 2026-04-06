@@ -87,7 +87,21 @@ export default function RegisterPage() {
             {!loading && <ArrowRight className="w-5 h-5" />}
           </button>
 
-          <div className="flex flex-col items-center gap-3 pt-6 mt-6 border-t border-[#E8E3DF]">
+          {/* Dinamic Social Proof */}
+          <div className="flex items-center justify-center gap-3 pt-3">
+            <div className="flex -space-x-2">
+              <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-200 overflow-hidden"><img src="https://i.pravatar.cc/100?img=1" alt="Avatar" /></div>
+              <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-200 overflow-hidden"><img src="https://i.pravatar.cc/100?img=33" alt="Avatar" /></div>
+              <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-200 overflow-hidden"><img src="https://i.pravatar.cc/100?img=47" alt="Avatar" /></div>
+              <div className="w-8 h-8 rounded-full border-2 border-white bg-[#D4AF37] flex items-center justify-center text-white text-[10px] font-bold">+</div>
+            </div>
+            <div className="text-xs text-[#8E7D73] font-medium leading-tight">
+              Junte-se a <strong className="text-[#3A2E27] font-bold">+280 fisioterapeutas</strong><br/>
+              que já utilizam a IA.
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center gap-3 mt-4 pt-4 border-t border-[#E8E3DF]">
             <div className="flex items-center gap-1.5 text-xs text-[#8E7D73] font-bold uppercase tracking-widest bg-[#FDFCFB] px-3 py-1 rounded">
               <Lock className="w-3.5 h-3.5" /> Checkout Seguro (SSL 256-bit)
             </div>

@@ -399,11 +399,17 @@ export default function ChatClient() {
       
       {/* SIDEBAR */}
       <div className={`fixed inset-y-0 left-0 z-40 w-72 bg-brown-900 text-white transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:flex-shrink-0 transition-transform duration-300 ease-in-out flex flex-col shadow-2xl`}>
-        <div className="p-4 border-b border-white/10 flex items-center justify-between">
-          <Link href="/agents" className="flex items-center gap-2 text-gold-400 hover:text-gold-300 transition-colors">
-            <ArrowLeft className="w-5 h-5" />
-            <span className="font-semibold tracking-tight text-sm uppercase">Sair</span>
-          </Link>
+        <div className="p-4 border-b border-white/10 flex items-start justify-between">
+          <div className="flex flex-col gap-3">
+            <Link href="/agents" className="flex items-center gap-2 text-gold-400 hover:text-gold-300 transition-colors">
+              <ArrowLeft className="w-5 h-5" />
+              <span className="font-semibold tracking-tight text-sm uppercase">Ir para Painel</span>
+            </Link>
+            <Link href="/biblioteca" className="flex items-center gap-2 text-white/60 hover:text-white transition-colors">
+              <BookOpen className="w-4 h-4" />
+              <span className="font-semibold text-[13px] tracking-wide">Minha Biblioteca</span>
+            </Link>
+          </div>
           <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 text-white/50 hover:text-white">
             <X className="w-5 h-5" />
           </button>
@@ -592,8 +598,11 @@ export default function ChatClient() {
                       <div className="flex items-center gap-2 text-xs font-bold text-gold-600 uppercase tracking-widest mb-2 pl-2">
                         <BookOpen className="w-4 h-4" /> Referencial Teórico Avalizado
                       </div>
-                      <div className="prose prose-sm prose-brown prose-p:text-xs prose-p:m-0 prose-p:leading-relaxed text-brown-600 pl-2">
-                        <ReactMarkdown>{references.trim()}</ReactMarkdown>
+                      <div className="prose prose-sm prose-brown prose-p:text-xs prose-p:m-0 prose-p:leading-relaxed text-brown-600 pl-2 prose-a:text-gold-600 prose-a:underline hover:prose-a:text-gold-700 prose-a:font-semibold">
+                        {/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
+                        <ReactMarkdown components={{ a: ({node, ...props}) => <a {...props} target="_blank" rel="noopener noreferrer" /> }}>
+                          {references.trim()}
+                        </ReactMarkdown>
                       </div>
                     </div>
                   )}
