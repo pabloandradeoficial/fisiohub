@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { login } from './actions';
 import { ArrowRight, ActivitySquare } from 'lucide-react';
@@ -8,8 +8,24 @@ import { ArrowRight, ActivitySquare } from 'lucide-react';
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('fisiohub_email');
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRememberMe(true);
+    }
+  }, []);
 
   async function handleSubmit(formData: FormData) {
+    if (rememberMe) {
+      localStorage.setItem('fisiohub_email', formData.get('email') as string);
+    } else {
+      localStorage.removeItem('fisiohub_email');
+    }
+    
     setLoading(true);
     setError(null);
     const res = await login(formData);
@@ -47,6 +63,9 @@ export default function LoginPage() {
                 name="email"
                 type="email"
                 required
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-[#E8E3DF] bg-[#FDFCFB] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-[#D4AF37] transition-colors"
                 placeholder="seu.email@exemplo.com"
               />
@@ -58,9 +77,23 @@ export default function LoginPage() {
                 name="password"
                 type="password"
                 required
+                autoComplete="current-password"
                 className="w-full px-4 py-3 rounded-xl border border-[#E8E3DF] bg-[#FDFCFB] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/20 focus:border-[#D4AF37] transition-colors"
                 placeholder="••••••••"
               />
+            </div>
+
+            <div className="flex items-center gap-2 pt-1 pb-2">
+              <input 
+                type="checkbox" 
+                id="remember" 
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-4 h-4 rounded border-[#E8E3DF] text-[#D4AF37] focus:ring-[#D4AF37]"
+              />
+              <label htmlFor="remember" className="text-sm font-medium text-[#8E7D73] cursor-pointer hover:text-[#4A3B32] transition-colors">
+                Lembrar meu email
+              </label>
             </div>
 
             <button
