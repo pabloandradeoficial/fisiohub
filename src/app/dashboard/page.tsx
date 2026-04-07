@@ -2,6 +2,7 @@ import { CheckCircle, PlayCircle, BrainCircuit, Lock, ShieldCheck, Sparkles, Che
 import Link from 'next/link';
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import UserWidgets from './UserWidgets';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -47,6 +48,8 @@ export default async function DashboardPage() {
         
         <div className="max-w-4xl w-full space-y-10 z-10 text-center mt-12 mb-20">
           
+          <UserWidgets />
+
           {!isElite && isTrialActive && (
             <div className="bg-gold-50 border border-gold-200 text-brown-800 rounded-2xl p-6 text-left shadow-sm max-w-3xl mx-auto flex flex-col sm:flex-row items-center sm:items-start gap-4">
               <div className="bg-gold-100 p-3 rounded-full shrink-0">
@@ -151,6 +154,8 @@ export default async function DashboardPage() {
             PRO
           </div>
         </header>
+
+        <UserWidgets />
 
         {/* Progress Widget */}
         <section className="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-[#E8E3DF] flex flex-col sm:flex-row items-center text-center sm:text-left gap-6 sm:gap-8">
