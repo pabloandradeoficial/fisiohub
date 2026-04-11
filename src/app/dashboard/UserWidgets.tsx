@@ -12,7 +12,11 @@ export default function UserWidgets() {
 
   useEffect(() => {
     getUserDashboardData().then(data => {
-      setMessages(data.messages);
+      if (data.error) {
+        console.error("Dashboard data erro:", data.error);
+        return;
+      }
+      setMessages(data.messages || []);
     }).catch(console.error);
   }, []);
 
@@ -21,12 +25,16 @@ export default function UserWidgets() {
     if (!suggestion.trim()) return;
     setSending(true);
     try {
-      await submitSuggestion(suggestion);
+      const res = await submitSuggestion(suggestion);
+      if (!res.success) {
+        alert('Erro ao enviar sugestão: ' + res.error);
+        return;
+      }
       alert('Sua sugestão foi enviada. Obrigado!');
       setSuggestion('');
       setShowSuggestBox(false);
     } catch (err: any) {
-      alert('Erro: ' + err.message);
+      alert('Erro inesperado: ' + err.message);
     } finally {
       setSending(false);
     }
@@ -34,7 +42,11 @@ export default function UserWidgets() {
 
   const handleDismissMessage = async (id: string) => {
     try {
-      await markMessageAsRead(id);
+      const res = await markMessageAsRead(id);
+      if (!res.success) {
+        console.error("Falha ao marcar como lida:", res.error);
+        return;
+      }
       setMessages(prev => prev.filter(m => m.id !== id));
     } catch (err) {
       console.error(err);
